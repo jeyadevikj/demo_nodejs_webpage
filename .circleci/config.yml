@@ -5,11 +5,14 @@ orbs:
 
 jobs:
   build_test:
-    executor:
-      name: node/default
+    docker:
+      - image: node:latest
     steps:
       - checkout
-      - node/install-packages
+      - run:
+          name: Install dependencies
+          command: |
+            npm install --save
 
   build_docker_image:
     docker:
