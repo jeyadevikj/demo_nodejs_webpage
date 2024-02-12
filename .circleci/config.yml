@@ -1,39 +1,30 @@
 version: 2.1
 
 jobs:
-  build_test:
+  build:
     docker:
-      - image: node:14
-    steps:
-      - checkout
-      - run:
-          name: Install dependencies
-          command: npm install --save
+      - image: circleci/classic:latest  # Choose an executor with necessary tools pre-installed
 
-  build_docker_image:
-    docker:
-      - image: node:14
     steps:
       - checkout
+
+      # Install Docker
       - run:
-          name: Build Docker Image
+          name: Install Docker
           command: |
-            docker build -t nodejswebapp1 -t jeyadevikj/nodejswebapp1:latest
+            curl -fsSL https://get.docker.com -o get-docker.sh
+            sudo sh get-docker.sh
+            sudo systemctl start docker
+            sudo systemctl enable docker
 
+      # Build Docker image
       - run:
-          name: Log in to Docker registry and push Docker image
+          name: Build Docker image
+          command: docker build -t nodejswebapp1 -t jeyadevikj/nodejswebapp1:latest .
+
+      # Log in to Docker registry and push Docker image
+      - run:
+          name: Push Docker image
           command: |
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
             docker push jeyadevikj/nodejswebapp1:latest
-
-      # Optionally, you can add cleanup steps to remove sensitive information
-      # after pushing the image, such as clearing the Docker login credentials.
-      # - run:
-      #     name: Clean up Docker credentials
-      #     command: echo "$DOCKER_PASSWORD" | docker logout
-
-workflows:
-  build_test_and_docker:
-    jobs:
-      - build_test
-      - build_docker_image
