@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build_test:
     docker:
-      - image: circleci/node:12
+      - image: circleci/node:14
     steps:
       - checkout
       - run:
@@ -12,7 +12,7 @@ jobs:
             npm install --save
   build_docker_image:
     docker:
-      - image: circleci:/node:12
+      - image: circleci:/node:14
     steps:
       - checkout
       - run:
