@@ -1,4 +1,5 @@
 version: 2.1
+
 jobs:
   build_test:
     docker:
@@ -7,21 +8,32 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: |
-            npm install --save
+          command: npm install --save
+
   build_docker_image:
     docker:
       - image: node:14
     steps:
       - checkout
       - run:
-          name: Build docker Image
+          name: Build Docker Image
           command: |
-            docker build -t nodejswebapp1 -t jeyadevikj/nodejswebapp1:latest .
-            echo $DOCKER PASSWORD | docker login -u jeyadevikj --password-stdin
+            docker build -t nodejswebapp1 -t jeyadevikj/nodejswebapp1:latest
+
+      - run:
+          name: Log in to Docker registry and push Docker image
+          command: |
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
             docker push jeyadevikj/nodejswebapp1:latest
+
+      # Optionally, you can add cleanup steps to remove sensitive information
+      # after pushing the image, such as clearing the Docker login credentials.
+      # - run:
+      #     name: Clean up Docker credentials
+      #     command: echo "$DOCKER_PASSWORD" | docker logout
+
 workflows:
-  build_test:
+  build_test_and_docker:
     jobs:
       - build_test
       - build_docker_image
