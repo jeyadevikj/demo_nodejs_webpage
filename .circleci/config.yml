@@ -1,4 +1,5 @@
 version: 2.1
+
 jobs:
   build_test:
     docker:
@@ -7,19 +8,27 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: |
-            npm install --save
+          command: npm install --save
+
   build_docker_image:
     docker:
       - image: node:14
     steps:
       - checkout
       - run:
-          name: Build docker Image
+          name: Debug Docker
+          command: |
+            docker --version
+            docker images
+            echo "Checking PATH: $PATH"
+
+      - run:
+          name: Build and push Docker Image
           command: |
             docker build -t nodejswebapp1 -t jeyadevi/nodejswebapp1:latest .
-            echo $DOCKER PASSWORD | docker login -u jeyadevi --password-stdin
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
             docker push jeyadevi/nodejswebapp1:latest
+
 workflows:
   build_test:
     jobs:
