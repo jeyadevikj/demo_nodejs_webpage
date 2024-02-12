@@ -17,9 +17,9 @@ jobs:
       - run:
           name: Build docker Image
           command: |
-            docker build -t nodejswebapp1 -t jeyadevikj/nodejswebapp1:latest .
-            echo $DOCKER PASSWORD | docker login -u jeyadevikj --password-stdin
-            docker push jeyadevikj/nodejswebapp1:latest
+            docker build -t nodejswebapp1 -t jeyadevi/nodejswebapp1:latest .
+            echo $DOCKER PASSWORD | docker login -u jeyadevi --password-stdin
+            docker push jeyadevi/nodejswebapp1:latest
 workflows:
   build_test:
     jobs:
