@@ -1,15 +1,26 @@
----
-version: 2.1
-executors:
-  my-executor:
-    docker:
-      - image: circleci/openjdk:11-jdk  # Choose an executor with Docker pre-installed
-
 jobs:
-  build:
-    executor: my-executor
+  build_test:
+    docker:
+      - image: node:14
     steps:
-      - checkout  # Example step to check out your code
+      - checkout
       - run:
-          name: Check Docker version
-          command: docker --version
+          name: Install dependencies
+          command: |
+            npm install --save
+  build_docker_image:
+    docker:
+      - image: node:14
+    steps:
+      - checkout
+      - run:
+          name: Build docker Image
+          command: |
+            docker build -t nodejswebapp1 -t jeyadevikj/nodejswebapp1:latest .
+            echo $DOCKER PASSWORD | docker login -u jeyadevikj --password-stdin
+            docker push jeyadevikj/nodejswebapp1:latest
+workflows:
+  build_test:
+    jobs:
+      - build_test
+      - build_docker_image
