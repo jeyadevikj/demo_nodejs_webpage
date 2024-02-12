@@ -13,7 +13,7 @@ jobs:
 
   build_docker_image:
     docker:
-      - image: cimg/node:14
+      - image: cimg/node:21.6.1
     steps:
       - checkout
       - setup_remote_docker
