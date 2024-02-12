@@ -1,31 +1,26 @@
-version: 2.1
+version:  2.1
+
+orbs:
+  node: circleci/node@4.1.0
 
 jobs:
   build_test:
-    docker:
-      - image: node:14
+    executor:
+      name: node/default
     steps:
       - checkout
-      - run:
-          name: Install dependencies
-          command: npm install --save
+      - node/install-packages
 
   build_docker_image:
     docker:
-      - image: node:14
+      - image: cimg/node:14
     steps:
       - checkout
-      - run:
-          name: Debug Docker
-          command: |
-            docker --version
-            docker images
-            echo "Checking PATH: $PATH"
-
+      - setup_remote_docker
       - run:
           name: Build and push Docker Image
           command: |
-            docker build -t nodejswebapp1 -t jeyadevi/nodejswebapp1:latest .
+            docker build -t jeyadevi/nodejswebapp1:latest .
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
             docker push jeyadevi/nodejswebapp1:latest
 
