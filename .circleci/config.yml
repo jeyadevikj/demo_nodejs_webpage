@@ -1,6 +1,29 @@
-version: 21
-  jobs: 
-    test:
-      docker:
-        -image: 
+---
+version: 2.1
+jobs:
+  build_test:
+    docker:
+      -image: circleci/node:12
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            npm install --save
+  build_docker_image:
+    docker:
+      - image: circleci:/node:12
+    steps:
+      - checkout
+      - run:
+          name: Build docker Image
+          command: |
+            docker build -t nodejswebapp1 -t jeyadevikj/nodejswebapp1:latest .
+            echo $DOCKER PASSWORD | docker login -u jeyadevikj --password-stdin
+            docker push jeyadevikj/nodejswebapp1:latest
+workflows:
+  build_test:
+    jobs:
+      - build_test
+      - build_docker_image
   
